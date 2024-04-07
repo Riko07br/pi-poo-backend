@@ -1,6 +1,7 @@
 package com.monza96.backend.domain;
 
 import com.monza96.backend.domain.enums.Authority;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +16,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,8 +39,8 @@ public class Role implements Serializable {
     private String title;
     private String description;
 
-    @OneToMany(mappedBy = "role")
-    private Set<ProjectUser> projectUsers;
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private Set<ProjectUser> projectUsers = new HashSet<>();
     //endregion
 
     public Role(Long id, Authority authority, String title, String description) {

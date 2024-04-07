@@ -1,5 +1,6 @@
 package com.monza96.backend.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class User implements Serializable {
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Setter(AccessLevel.NONE)
     private Set<ProjectUser> projectUsers = new HashSet<>();
     //endregion
