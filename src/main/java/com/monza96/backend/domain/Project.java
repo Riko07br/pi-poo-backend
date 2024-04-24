@@ -12,9 +12,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,7 +26,6 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "tb_project")
 public class Project implements Serializable {
@@ -35,16 +38,20 @@ public class Project implements Serializable {
     private Long id;
     private String name;
     private String description;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @Setter(AccessLevel.NONE)
     private Set<ProjectUser> projectUsers = new HashSet<>();
     //endregion
 
-    public Project(Long id, String name, String description) {
+    public Project(Long id, String name, String description, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
 

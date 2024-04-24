@@ -7,6 +7,7 @@ import com.monza96.backend.mappers.ProjectMapper;
 import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -14,33 +15,40 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
 
-    private final ProjectRepository userRepository;
+    private final ProjectRepository projectRepository;
 
-    public ProjectService(ProjectRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public List<ProjectResponseDTO> findAll() {
-        return userRepository.findAll().stream().map(x -> ProjectMapper.toResponseDTO(x)).toList();
+        return projectRepository.findAll().stream().map(x -> ProjectMapper.toResponseDTO(x)).toList();
     }
 
     public ProjectResponseDTO findById(Long id) {
-        Project user = userRepository.findById(id)
+        Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
 
-        return ProjectMapper.toResponseDTO(user);
+        return ProjectMapper.toResponseDTO(project);
     }
 
     public ProjectResponseDTO create(ProjectRequestDTO dto) {
-        Project user = ProjectMapper.toEntity(dto);
-        return ProjectMapper.toResponseDTO(userRepository.save(user));
+        Project project = new Project(null, dto.name(), dto.description(), dto.startDate(), dto.endDate());
+
+        //find the creator user
+
+        //save the project
+
+        //save the creator ProjectUser
+
+        //TODO other users are added through the projectUser service
+
+        return ProjectMapper.toResponseDTO(projectRepository.save(project));
     }
 
     public void delete(Long id) {
         try {
-            userRepository.deleteById(id);
+            projectRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(Project.class, id);
         } catch (DataIntegrityViolationException e) {
@@ -49,12 +57,16 @@ public class ProjectService {
     }
 
     public ProjectResponseDTO update(Long id, ProjectRequestDTO dto) {
-        Project user = userRepository.findById(id)
+        Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
 
-        user.setEmail(dto.email());
-        user.setPassword(dto.password());
+        project.setName(dto.name());
+        project.setDescription(dto.description());
+        project.setStartDate(dto.startDate());
+        project.setEndDate(dto.endDate());
 
-        return ProjectMapper.toResponseDTO(userRepository.save(user));
+        //TODO update projectUser on the corresponding service
+
+        return ProjectMapper.toResponseDTO(projectRepository.save(project));
     }
 }

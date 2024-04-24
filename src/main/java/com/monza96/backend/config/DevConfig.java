@@ -44,7 +44,7 @@ public class DevConfig implements CommandLineRunner {
         User u4 = userRepository.save(new User(null, "user4@mail.com", "123456"));
 
 
-        Project p1 = projectRepository.save(new Project(null, "Project 1", "Description 1"));
+        Project p1 = projectRepository.save(new Project(null, "Project 1", "Description 1", null, null));
         //Project p2 = new Project(null, "Project 2", "Description 2");
         //Project p3 = new Project(null, "Project 3", "Description 3");
 

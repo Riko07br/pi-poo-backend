@@ -1,13 +1,14 @@
 package com.monza96.backend.dtos;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 public record ProjectResponseDTO(
         Long id,
         String name,
         String description,
-        String status,
-        String startDate,
-        String endDate,
-        String createdAt,
-        String updatedAt
+        LocalDate startDate,
+        LocalDate endDate,
+        Set<ProjectUserResponseDTO> projectUsers
 ) {
 }
