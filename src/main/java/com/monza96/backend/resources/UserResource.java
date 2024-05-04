@@ -1,7 +1,7 @@
 package com.monza96.backend.resources;
 
-import com.monza96.backend.dtos.UserRequestDTO;
-import com.monza96.backend.dtos.UserResponseDTO;
+import com.monza96.backend.domain.dtos.UserRequestDTO;
+import com.monza96.backend.domain.dtos.UserResponseDTO;
 import com.monza96.backend.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

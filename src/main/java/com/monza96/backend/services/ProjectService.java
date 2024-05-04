@@ -1,9 +1,9 @@
 package com.monza96.backend.services;
 
 import com.monza96.backend.domain.Project;
-import com.monza96.backend.dtos.ProjectRequestDTO;
-import com.monza96.backend.dtos.ProjectResponseDTO;
-import com.monza96.backend.mappers.ProjectMapper;
+import com.monza96.backend.domain.dtos.ProjectRequestDTO;
+import com.monza96.backend.domain.dtos.ProjectResponseDTO;
+import com.monza96.backend.domain.mappers.ProjectMapper;
 import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;

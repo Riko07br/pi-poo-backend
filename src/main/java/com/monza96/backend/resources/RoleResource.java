@@ -1,6 +1,6 @@
 package com.monza96.backend.resources;
 
-import com.monza96.backend.dtos.RoleResponseDTO;
+import com.monza96.backend.domain.dtos.RoleResponseDTO;
 import com.monza96.backend.services.RoleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

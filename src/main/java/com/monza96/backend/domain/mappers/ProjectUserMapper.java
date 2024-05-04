@@ -1,7 +1,7 @@
-package com.monza96.backend.mappers;
+package com.monza96.backend.domain.mappers;
 
 import com.monza96.backend.domain.ProjectUser;
-import com.monza96.backend.dtos.ProjectUserResponseDTO;
+import com.monza96.backend.domain.dtos.ProjectUserResponseDTO;
 
 public class ProjectUserMapper {
 

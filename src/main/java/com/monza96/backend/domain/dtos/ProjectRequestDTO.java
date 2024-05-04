@@ -1,4 +1,4 @@
-package com.monza96.backend.dtos;
+package com.monza96.backend.domain.dtos;
 
 import java.time.LocalDate;
 

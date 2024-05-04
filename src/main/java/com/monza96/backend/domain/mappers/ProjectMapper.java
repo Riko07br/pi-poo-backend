@@ -1,7 +1,7 @@
-package com.monza96.backend.mappers;
+package com.monza96.backend.domain.mappers;
 
 import com.monza96.backend.domain.Project;
-import com.monza96.backend.dtos.ProjectResponseDTO;
+import com.monza96.backend.domain.dtos.ProjectResponseDTO;
 
 import java.util.stream.Collectors;
 

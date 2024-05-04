@@ -1,8 +1,8 @@
 package com.monza96.backend.services;
 
 import com.monza96.backend.domain.Role;
-import com.monza96.backend.dtos.RoleResponseDTO;
-import com.monza96.backend.mappers.RoleMapper;
+import com.monza96.backend.domain.dtos.RoleResponseDTO;
+import com.monza96.backend.domain.mappers.RoleMapper;
 import com.monza96.backend.repository.RoleRepository;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;

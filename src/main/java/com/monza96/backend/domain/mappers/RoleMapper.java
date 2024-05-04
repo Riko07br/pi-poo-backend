@@ -1,7 +1,7 @@
-package com.monza96.backend.mappers;
+package com.monza96.backend.domain.mappers;
 
 import com.monza96.backend.domain.Role;
-import com.monza96.backend.dtos.RoleResponseDTO;
+import com.monza96.backend.domain.dtos.RoleResponseDTO;
 
 public class RoleMapper {
     public static RoleResponseDTO toResponseDTO(Role role) {
