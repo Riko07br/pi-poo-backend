@@ -22,9 +22,12 @@ public class RoleService {
     }
 
     public RoleResponseDTO findById(Long id) {
-        Role Role = roleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Role.class, id));
-
+        Role Role = findEntityById(id);
         return RoleMapper.toResponseDTO(Role);
+    }
+
+    Role findEntityById(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Role.class, id));
     }
 }

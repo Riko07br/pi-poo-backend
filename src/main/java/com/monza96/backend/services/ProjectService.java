@@ -26,9 +26,7 @@ public class ProjectService {
     }
 
     public ProjectResponseDTO findById(Long id) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
-
+        Project project = findEntityById(id);
         return ProjectMapper.toResponseDTO(project);
     }
 
@@ -68,5 +66,10 @@ public class ProjectService {
         //TODO update projectUser on the corresponding service
 
         return ProjectMapper.toResponseDTO(projectRepository.save(project));
+    }
+
+    protected Project findEntityById(Long id) {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
     }
 }

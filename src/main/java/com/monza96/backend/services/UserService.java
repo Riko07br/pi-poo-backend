@@ -27,9 +27,7 @@ public class UserService {
     }
 
     public UserResponseDTO findById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
-
+        User user = findEntityById(id);
         return UserMapper.toResponseDTO(user);
     }
 
@@ -56,5 +54,10 @@ public class UserService {
         user.setPassword(dto.password());
 
         return UserMapper.toResponseDTO(userRepository.save(user));
+    }
+
+    User findEntityById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
     }
 }
