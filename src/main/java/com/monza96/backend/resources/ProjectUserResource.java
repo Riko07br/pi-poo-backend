@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/project-users")
+@RequestMapping("/projects/{projectId}/project-users")
 public class ProjectUserResource {
     private final ProjectUserService projectUserService;
 
@@ -27,32 +27,39 @@ public class ProjectUserResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectUserResponseDTO>> findAll() {
-        List<ProjectUserResponseDTO> projectUsers = projectUserService.findAll();
+    public ResponseEntity<List<ProjectUserResponseDTO>> findAll(@PathVariable Long projectId) {
+        List<ProjectUserResponseDTO> projectUsers = projectUserService.findAll(projectId);
         return ResponseEntity.ok().body(projectUsers);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectUserResponseDTO> findById(@PathVariable Long id) {
-        ProjectUserResponseDTO responseDTO = projectUserService.findById(id);
+    public ResponseEntity<ProjectUserResponseDTO> findById(@PathVariable Long projectId, @PathVariable Long id) {
+        ProjectUserResponseDTO responseDTO = projectUserService.findById(projectId, id);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @PostMapping
-    public ResponseEntity<ProjectUserResponseDTO> create(@RequestBody ProjectUserRequestDTO projectUserRequestDTO) throws URISyntaxException {
-        ProjectUserResponseDTO responseDTO = projectUserService.create(projectUserRequestDTO);
-        return ResponseEntity.created(new URI("/projectUsers/" + responseDTO.id())).body(responseDTO);
+    public ResponseEntity<ProjectUserResponseDTO> create(@PathVariable Long projectId,
+                                                         @RequestBody ProjectUserRequestDTO projectUserRequestDTO) throws URISyntaxException {
+        ProjectUserResponseDTO responseDTO = projectUserService.create(projectId, projectUserRequestDTO);
+        return ResponseEntity.created(new URI("/projects/" +
+                projectId +
+                "/project-users/" +
+                responseDTO.id())).body(responseDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectUserResponseDTO> update(@PathVariable Long id, @RequestBody ProjectUserRequestDTO requestDTO) {
-        ProjectUserResponseDTO responseDTO = projectUserService.update(id, requestDTO);
+    public ResponseEntity<ProjectUserResponseDTO> update(@PathVariable Long projectId,
+                                                         @PathVariable Long id,
+                                                         @RequestBody ProjectUserRequestDTO requestDTO) {
+        ProjectUserResponseDTO responseDTO = projectUserService.update(projectId, id, requestDTO);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        projectUserService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long projectId,
+                                       @PathVariable Long id) {
+        projectUserService.delete(projectId, id);
         return ResponseEntity.noContent().build();
     }
 
