@@ -3,6 +3,7 @@ package com.monza96.backend.resources;
 import com.monza96.backend.domain.dtos.UserRequestDTO;
 import com.monza96.backend.domain.dtos.UserResponseDTO;
 import com.monza96.backend.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +20,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserResource {
-    private final UserService userService;
 
-    public UserResource(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll() {

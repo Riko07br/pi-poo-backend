@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Arrays;
 
@@ -38,10 +39,11 @@ public class DevConfig implements CommandLineRunner {
         Role r5 = roleRepository.save(new Role(null, Authority.PROJECT_USER, "Project User", "TODO - Define the role"));
         Role r6 = roleRepository.save(new Role(null, Authority.PROJECT_VIEWER, "Project Viewer", "TODO - Define the role"));
 
-        User u1 = userRepository.save(new User(null, "user1@mail.com", "123456"));
-        User u2 = userRepository.save(new User(null, "user2@mail.com", "123456"));
-        User u3 = userRepository.save(new User(null, "user3@mail.com", "123456"));
-        User u4 = userRepository.save(new User(null, "user4@mail.com", "123456"));
+        String userPassword = new BCryptPasswordEncoder().encode("123456");
+        User u1 = userRepository.save(new User(null, "user1@mail.com", userPassword));
+        User u2 = userRepository.save(new User(null, "user2@mail.com", userPassword));
+        User u3 = userRepository.save(new User(null, "user3@mail.com", userPassword));
+        User u4 = userRepository.save(new User(null, "user4@mail.com", userPassword));
 
 
         Project p1 = projectRepository.save(new Project(null, "Project 1", "Description 1", null, null));
