@@ -5,29 +5,28 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Authority {
-    SUPER_ADMIN(1),
-    PROJECT_CREATOR(2),
-    PROJECT_ADMIN(3),
-    PROJECT_ORG(4),
-    PROJECT_USER(5),
-    PROJECT_VIEWER(6);
+public enum ProjectAuthority {
+    CREATOR(1),
+    ADMIN(2),
+    ORGANIZER(3),
+    USER(4),
+    VIEWER(5);
 
-    final private static Map<Integer, Authority> map = new HashMap<>();
+    final private static Map<Integer, ProjectAuthority> map = new HashMap<>();
     @Getter
     final private int value;
 
     static {
-        for (Authority val : Authority.values()) {
+        for (ProjectAuthority val : ProjectAuthority.values()) {
             map.put(val.getValue(), val);
         }
     }
 
-    Authority(int value) {
+    ProjectAuthority(int value) {
         this.value = value;
     }
 
-    public static Authority valueOf(int value) {
+    public static ProjectAuthority valueOf(int value) {
         if (map.containsKey(value))
             return map.get(value);
         throw new IllegalArgumentException("Invalid value for Authority");

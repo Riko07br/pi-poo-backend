@@ -39,7 +39,7 @@ public class EmailAndPasswordProvider implements AuthenticationProvider {
     }
 
     private List<GrantedAuthority> getAuthorities(User user) {
-        //should create a list of roles
+        //TODO should create a list of roles
         return List.of(() -> "ROLE_USER");
     }
 }

@@ -1,6 +1,6 @@
 package com.monza96.backend.domain;
 
-import com.monza96.backend.domain.enums.Authority;
+import com.monza96.backend.domain.enums.ProjectAuthority;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,19 +42,19 @@ public class Role implements Serializable {
     private Set<ProjectUser> projectUsers = new HashSet<>();
     //endregion
 
-    public Role(Long id, Authority authority, String title, String description) {
+    public Role(Long id, ProjectAuthority projectAuthority, String title, String description) {
         this.id = id;
-        this.authority = authority.getValue();
+        this.authority = projectAuthority.getValue();
         this.title = title;
         this.description = description;
     }
 
-    public Authority getAuthority() {
-        return Authority.valueOf(authority);
+    public ProjectAuthority getAuthority() {
+        return ProjectAuthority.valueOf(authority);
     }
 
-    public void setAuthority(Authority authority) {
-        this.authority = authority.getValue();
+    public void setAuthority(ProjectAuthority projectAuthority) {
+        this.authority = projectAuthority.getValue();
     }
 
     //region Equals & Hashcode
