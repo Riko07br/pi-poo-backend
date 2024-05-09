@@ -10,7 +10,7 @@ public class ProjectUserMapper {
         return new ProjectUserResponseDTO(
                 entity.getId(),
                 UserMapper.toResponseDTO(entity.getUser()),
-                RoleMapper.toResponseDTO(entity.getRole())
+                entity.getRole().getAuthority()
         );
     }
 }
