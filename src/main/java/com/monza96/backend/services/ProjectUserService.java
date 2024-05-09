@@ -8,6 +8,7 @@ import com.monza96.backend.domain.dtos.ProjectUserRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectUserResponseDTO;
 import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.domain.mappers.ProjectUserMapper;
+import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.repository.ProjectUserRepository;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
@@ -24,7 +25,8 @@ public class ProjectUserService {
 
     private final ProjectUserRepository projectUserRepository;
 
-    private final ProjectService projectService;
+    private final ProjectRepository projectRepository;  //service is not used to avoid circular dependency
+
     private final RoleService roleService;
     private final UserService userService;
 
@@ -40,7 +42,8 @@ public class ProjectUserService {
     }
 
     public ProjectUserResponseDTO create(Long projectId, ProjectUserRequestDTO dto) {
-        Project project = projectService.findEntityById(projectId);
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException(Project.class, projectId));
         User user = userService.findEntityById(dto.userId());
         Role role = roleService.findEntityByAuthority(dto.authority());
 

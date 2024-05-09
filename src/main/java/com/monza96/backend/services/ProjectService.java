@@ -29,7 +29,6 @@ public class ProjectService {
     private final RoleService roleService;
     private final UserService userService;
 
-
     public List<ProjectResponseDTO> findAll() {
         return projectRepository.findAll().stream().map(x -> ProjectMapper.toResponseDTO(x)).toList();
     }
