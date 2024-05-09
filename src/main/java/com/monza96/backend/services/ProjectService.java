@@ -1,8 +1,12 @@
 package com.monza96.backend.services;
 
 import com.monza96.backend.domain.Project;
+import com.monza96.backend.domain.ProjectUser;
+import com.monza96.backend.domain.Role;
+import com.monza96.backend.domain.User;
 import com.monza96.backend.domain.dtos.ProjectRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectResponseDTO;
+import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.domain.mappers.ProjectMapper;
 import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.services.exceptions.DatabaseException;
@@ -10,6 +14,7 @@ import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +24,10 @@ import java.util.List;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+
+    private final ProjectUserService projectUserService;
+    private final RoleService roleService;
+    private final UserService userService;
 
 
     public List<ProjectResponseDTO> findAll() {
@@ -30,18 +39,19 @@ public class ProjectService {
         return ProjectMapper.toResponseDTO(project);
     }
 
-    public ProjectResponseDTO create(ProjectRequestDTO dto) {
+    public ProjectResponseDTO create(Authentication authentication, ProjectRequestDTO dto) {
+
+        User projectCreator = userService.findEntityByEmail(authentication.getName());
+        Role creatorRole = roleService.findEntityByAuthority(ProjectAuthority.CREATOR);
+
         Project project = new Project(null, dto.name(), dto.description(), dto.startDate(), dto.endDate());
+        project = projectRepository.save(project);
 
-        //find the creator user
-
-        //save the project
-
-        //save the creator ProjectUser
+        projectUserService.createEntity(projectCreator, project, creatorRole);
 
         //TODO other users are added through the projectUser service
 
-        return ProjectMapper.toResponseDTO(projectRepository.save(project));
+        return ProjectMapper.toResponseDTO(project);
     }
 
     public void delete(Long id) {
@@ -55,8 +65,7 @@ public class ProjectService {
     }
 
     public ProjectResponseDTO update(Long id, ProjectRequestDTO dto) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
+        Project project = findEntityById(id);
 
         project.setName(dto.name());
         project.setDescription(dto.description());
@@ -68,7 +77,7 @@ public class ProjectService {
         return ProjectMapper.toResponseDTO(projectRepository.save(project));
     }
 
-    protected Project findEntityById(Long id) {
+    Project findEntityById(Long id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
     }

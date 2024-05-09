@@ -2,6 +2,7 @@ package com.monza96.backend.services;
 
 import com.monza96.backend.domain.Role;
 import com.monza96.backend.domain.dtos.RoleResponseDTO;
+import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.domain.mappers.RoleMapper;
 import com.monza96.backend.repository.RoleRepository;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
@@ -29,5 +30,10 @@ public class RoleService {
     Role findEntityById(Long id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Role.class, id));
+    }
+
+    Role findEntityByAuthority(ProjectAuthority authority) {
+        return roleRepository.findByAuthority(authority.getValue())
+                .orElseThrow(() -> new ResourceNotFoundException(Role.class, "Authority: " + authority.toString()));
     }
 }

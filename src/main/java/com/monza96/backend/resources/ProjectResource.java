@@ -4,6 +4,7 @@ import com.monza96.backend.domain.dtos.ProjectRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectResponseDTO;
 import com.monza96.backend.services.ProjectService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,8 +40,9 @@ public class ProjectResource {
     }
 
     @PostMapping
-    public ResponseEntity<ProjectResponseDTO> create(@RequestBody ProjectRequestDTO projectRequestDTO) throws URISyntaxException {
-        ProjectResponseDTO responseDTO = projectService.create(projectRequestDTO);
+    public ResponseEntity<ProjectResponseDTO> create(Authentication authentication,
+                                                     @RequestBody ProjectRequestDTO projectRequestDTO) throws URISyntaxException {
+        ProjectResponseDTO responseDTO = projectService.create(authentication, projectRequestDTO);
         return ResponseEntity.created(new URI("/projects/" + responseDTO.id())).body(responseDTO);
     }
 
