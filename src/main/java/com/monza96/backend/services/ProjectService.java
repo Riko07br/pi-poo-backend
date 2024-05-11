@@ -9,6 +9,7 @@ import com.monza96.backend.domain.dtos.ProjectResponseDTO;
 import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.domain.mappers.ProjectMapper;
 import com.monza96.backend.repository.ProjectRepository;
+import com.monza96.backend.repository.ProjectUserRepository;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    private final ProjectUserService projectUserService;
+    private final ProjectUserRepository projectUserRepository;  //service is not used to avoid circular dependency
     private final RoleService roleService;
     private final UserService userService;
 
@@ -45,10 +46,8 @@ public class ProjectService {
 
         Project project = new Project(null, dto.name(), dto.description(), dto.startDate(), dto.endDate());
         project = projectRepository.save(project);
-
-        projectUserService.createEntity(projectCreator, project, creatorRole);
-
-        //TODO other users are added through the projectUser service
+        
+        projectUserRepository.save(new ProjectUser(null, projectCreator, project, creatorRole));
 
         return ProjectMapper.toResponseDTO(project);
     }
@@ -70,8 +69,6 @@ public class ProjectService {
         project.setDescription(dto.description());
         project.setStartDate(dto.startDate());
         project.setEndDate(dto.endDate());
-
-        //TODO update projectUser on the corresponding service
 
         return ProjectMapper.toResponseDTO(projectRepository.save(project));
     }

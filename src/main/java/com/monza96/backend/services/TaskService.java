@@ -22,22 +22,22 @@ public class TaskService {
 
     private final ProjectService projectService;
 
-    public List<TaskResponseDTO> findAll(Long projectId) {
-        return taskRepository.findByProjectId(projectId).stream().map(x -> TaskMapper.toResponseDTO(x)).toList();
+    public List<TaskResponseDTO> findAll() {
+        return taskRepository.findAll().stream().map(x -> TaskMapper.toResponseDTO(x)).toList();
     }
 
-    public TaskResponseDTO findById(Long projectId, Long id) {
-        Task task = findEntityByProjectIdAndId(projectId, id);
+    public TaskResponseDTO findById(Long id) {
+        Task task = findEntityById(id);
         return TaskMapper.toResponseDTO(task);
     }
 
-    public TaskResponseDTO create(Long projectId, TaskRequestDTO dto) {
-        Project project = projectService.findEntityById(projectId);
+    public TaskResponseDTO create(TaskRequestDTO dto) {
+        Project project = projectService.findEntityById(dto.projectId());
         Task task = TaskMapper.toEntity(dto, project);
         return TaskMapper.toResponseDTO(taskRepository.save(task));
     }
 
-    public void delete(Long projectId, Long id) {
+    public void delete(Long id) {
         try {
             taskRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -47,18 +47,18 @@ public class TaskService {
         }
     }
 
-    public TaskResponseDTO update(Long projectId, Long id, TaskRequestDTO dto) {
-        Task task = findEntityByProjectIdAndId(projectId, id);
+    public TaskResponseDTO update(Long id, TaskRequestDTO dto) {
+        Task task = findEntityById(id);
 
+        task.setTitle(dto.title());
         task.setDescription(dto.description());
         task.setDueTime(dto.dueTime());
-        task.setTitle(dto.title());
 
         return TaskMapper.toResponseDTO(taskRepository.save(task));
     }
 
-    Task findEntityByProjectIdAndId(Long projectId, Long id) {
-        return taskRepository.findByProjectIdAndId(projectId, id)
+    Task findEntityById(Long id) {
+        return taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
     }
 }

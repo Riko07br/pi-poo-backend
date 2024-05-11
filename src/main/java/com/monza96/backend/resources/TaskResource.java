@@ -20,44 +20,38 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/projects/{projectId}/tasks")
+@RequestMapping("/tasks")
 public class TaskResource {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDTO>> findAll(@PathVariable Long projectId) {
-        List<TaskResponseDTO> tasks = taskService.findAll(projectId);
+    public ResponseEntity<List<TaskResponseDTO>> findAll() {
+        List<TaskResponseDTO> tasks = taskService.findAll();
         return ResponseEntity.ok().body(tasks);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long projectId, @PathVariable Long id) {
-        TaskResponseDTO responseDTO = taskService.findById(projectId, id);
+    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long id) {
+        TaskResponseDTO responseDTO = taskService.findById(id);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> create(@PathVariable Long projectId,
-                                                  @RequestBody TaskRequestDTO taskRequestDTO) throws URISyntaxException {
-        TaskResponseDTO responseDTO = taskService.create(projectId, taskRequestDTO);
-        return ResponseEntity.created(new URI("/projects/" +
-                projectId +
-                "/project-users/" +
-                responseDTO.id())).body(responseDTO);
+    public ResponseEntity<TaskResponseDTO> create(@RequestBody TaskRequestDTO taskRequestDTO) throws URISyntaxException {
+        TaskResponseDTO responseDTO = taskService.create(taskRequestDTO);
+        return ResponseEntity.created(new URI("/tasks/" + responseDTO.id())).body(responseDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> update(@PathVariable Long projectId,
-                                                  @PathVariable Long id,
+    public ResponseEntity<TaskResponseDTO> update(@PathVariable Long id,
                                                   @RequestBody TaskRequestDTO requestDTO) {
-        TaskResponseDTO responseDTO = taskService.update(projectId, id, requestDTO);
+        TaskResponseDTO responseDTO = taskService.update(id, requestDTO);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long projectId,
-                                       @PathVariable Long id) {
-        taskService.delete(projectId, id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        taskService.delete(id);
         return ResponseEntity.noContent().build();
     }
 

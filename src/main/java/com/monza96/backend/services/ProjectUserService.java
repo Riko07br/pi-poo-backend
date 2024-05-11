@@ -6,9 +6,7 @@ import com.monza96.backend.domain.Role;
 import com.monza96.backend.domain.User;
 import com.monza96.backend.domain.dtos.ProjectUserRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectUserResponseDTO;
-import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.domain.mappers.ProjectUserMapper;
-import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.repository.ProjectUserRepository;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
@@ -25,39 +23,38 @@ public class ProjectUserService {
 
     private final ProjectUserRepository projectUserRepository;
 
-    private final ProjectRepository projectRepository;  //service is not used to avoid circular dependency
-
+    private final ProjectService projectService;
     private final RoleService roleService;
     private final UserService userService;
 
-    public List<ProjectUserResponseDTO> findAll(Long projectId) {
-        return projectUserRepository.findAllByProjectId(projectId)
+    public List<ProjectUserResponseDTO> findAll() {
+        return projectUserRepository.findAll()
                 .stream()
                 .map(x -> ProjectUserMapper.toResponseDTO(x)).toList();
     }
 
-    public ProjectUserResponseDTO findById(Long projectId, Long id) {
-        ProjectUser projectUser = findEntityByProjectIdAndId(projectId, id);
+    public ProjectUserResponseDTO findById(Long id) {
+        ProjectUser projectUser = findEntityById(id);
         return ProjectUserMapper.toResponseDTO(projectUser);
     }
 
-    public ProjectUserResponseDTO create(Long projectId, ProjectUserRequestDTO dto) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceNotFoundException(Project.class, projectId));
+    public ProjectUserResponseDTO create(ProjectUserRequestDTO dto) {
+        Project project = projectService.findEntityById(dto.projectId());
         User user = userService.findEntityById(dto.userId());
         Role role = roleService.findEntityByAuthority(dto.authority());
 
-        ProjectUser projectUser = createEntity(user, project, role);
+        project.getProjectUsers().stream()
+                .filter(x -> x.getUser().equals(user)).findFirst()
+                .ifPresent(x -> {
+                    throw new DatabaseException("User already in project, use PUT to update the role");
+                });
+
+        ProjectUser projectUser = new ProjectUser(null, user, project, role);
 
         return ProjectUserMapper.toResponseDTO(projectUserRepository.save(projectUser));
     }
 
-    public void delete(Long projectId, Long id) {
-        ProjectUser projectUser = findEntityById(id);
-        if (!projectUser.getProject().getId().equals(projectId)) {
-            throw new ResourceNotFoundException(ProjectUser.class, id);
-        }
-
+    public void delete(Long id) {
         try {
             projectUserRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -67,8 +64,8 @@ public class ProjectUserService {
         }
     }
 
-    public ProjectUserResponseDTO update(Long projectId, Long id, ProjectUserRequestDTO dto) {
-        ProjectUser projectUser = findEntityByProjectIdAndId(projectId, id);
+    public ProjectUserResponseDTO update(Long id, ProjectUserRequestDTO dto) {
+        ProjectUser projectUser = findEntityById(id);
 
         User userUpdater = userService.findEntityById(dto.userId());
         if (projectUser.getUser().equals(userUpdater)) {
@@ -85,22 +82,5 @@ public class ProjectUserService {
     ProjectUser findEntityById(Long id) {
         return projectUserRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ProjectUser.class, id));
-    }
-
-    ProjectUser findEntityByProjectIdAndId(Long projectId, Long id) {
-        return projectUserRepository.findByProjectIdAndId(projectId, id)
-                .orElseThrow(() -> new ResourceNotFoundException(ProjectUser.class, id));
-    }
-
-    ProjectUser createEntity(User user, Project project, Role role) {
-
-        project.getProjectUsers().stream()
-                .filter(x -> x.getUser().equals(user)).findFirst()
-                .ifPresent(x -> {
-                    throw new DatabaseException("User already in project, use PUT to update the role");
-                });
-
-        ProjectUser projectUser = new ProjectUser(null, user, project, role);
-        return projectUserRepository.save(projectUser);
     }
 }
