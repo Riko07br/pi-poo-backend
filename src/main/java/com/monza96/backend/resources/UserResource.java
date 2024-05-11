@@ -22,7 +22,6 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserResource {
-
     private final UserService userService;
 
     @GetMapping

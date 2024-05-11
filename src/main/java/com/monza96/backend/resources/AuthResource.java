@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthResource {
-
     private final UserService userService;
 
     @GetMapping("/login")

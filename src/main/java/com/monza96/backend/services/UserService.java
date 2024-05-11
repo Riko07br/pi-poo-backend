@@ -47,8 +47,7 @@ public class UserService {
     }
 
     public UserResponseDTO update(Long id, UserRequestDTO dto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
+        User user = findEntityById(id);
 
         user.setEmail(dto.email());
         user.setPassword(dto.password());

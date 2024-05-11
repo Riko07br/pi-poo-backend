@@ -3,6 +3,7 @@ package com.monza96.backend.resources;
 import com.monza96.backend.domain.dtos.ProjectRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectResponseDTO;
 import com.monza96.backend.services.ProjectService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,14 +19,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/projects")
 public class ProjectResource {
     private final ProjectService projectService;
-
-    public ProjectResource(ProjectService projectService) {
-        this.projectService = projectService;
-    }
 
     @GetMapping
     public ResponseEntity<List<ProjectResponseDTO>> findAll() {
