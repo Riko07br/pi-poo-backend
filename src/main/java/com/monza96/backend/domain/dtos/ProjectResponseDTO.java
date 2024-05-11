@@ -8,7 +8,6 @@ public record ProjectResponseDTO(
         String name,
         String description,
         LocalDate startDate,
-        LocalDate endDate,
-        Set<ProjectUserResponseDTO> projectUsers
+        LocalDate endDate
 ) {
 }

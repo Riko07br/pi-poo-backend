@@ -4,21 +4,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "tb_project_user")
 public class ProjectUser implements Serializable {
@@ -36,7 +38,17 @@ public class ProjectUser implements Serializable {
     private Project project;
     @ManyToOne
     private Role role;
+    @ManyToMany(mappedBy = "projectUsers")
+    @Setter(AccessLevel.NONE)
+    private Set<Task> tasks = new HashSet<>();
     //endregion
+
+    public ProjectUser(Long id, User user, Project project, Role role) {
+        this.id = id;
+        this.user = user;
+        this.project = project;
+        this.role = role;
+    }
 
     //region Equals & Hashcode
     @Override

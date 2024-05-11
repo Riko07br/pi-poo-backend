@@ -3,11 +3,13 @@ package com.monza96.backend.config;
 import com.monza96.backend.domain.Project;
 import com.monza96.backend.domain.ProjectUser;
 import com.monza96.backend.domain.Role;
+import com.monza96.backend.domain.Task;
 import com.monza96.backend.domain.User;
 import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.repository.ProjectUserRepository;
 import com.monza96.backend.repository.RoleRepository;
+import com.monza96.backend.repository.TaskRepository;
 import com.monza96.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,6 +29,8 @@ public class DevConfig implements CommandLineRunner {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
+    private TaskRepository taskRepository;
+    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -44,19 +48,32 @@ public class DevConfig implements CommandLineRunner {
         User u2 = userRepository.save(new User(null, "user2@mail.com", userPassword));
         User u3 = userRepository.save(new User(null, "user3@mail.com", userPassword));
         User u4 = userRepository.save(new User(null, "user4@mail.com", userPassword));
+        User u5 = userRepository.save(new User(null, "user5@mail.com", userPassword));
+        User u6 = userRepository.save(new User(null, "user6@mail.com", userPassword));
 
+        Project p1 = projectRepository.save(new Project(null, "Project 1", "Some tasks", null, null));
+        ProjectUser p1u2 = projectUserRepository.save(new ProjectUser(null, u2, p1, r2));
+        ProjectUser p1u3 = projectUserRepository.save(new ProjectUser(null, u3, p1, r4));
+        ProjectUser p1u4 = projectUserRepository.save(new ProjectUser(null, u4, p1, r5));
 
-        Project p1 = projectRepository.save(new Project(null, "Project 1", "Description 1", null, null));
-        //Project p2 = new Project(null, "Project 2", "Description 2");
-        //Project p3 = new Project(null, "Project 3", "Description 3");
+        Task p1t1 = new Task(null, "Task 1", "Description 1", null, p1);
+        p1t1.getProjectUsers().add(p1u2);
+        p1t1.getProjectUsers().add(p1u3);
 
-        //projectRepository.saveAll(Arrays.asList(p1, p2, p3));
-        //ProjectUser pu1 = new ProjectUser(null, u1, p1, r1);
-        ProjectUser pu2 = new ProjectUser(null, u2, p1, r2);
-        ProjectUser pu3 = new ProjectUser(null, u3, p1, r5);
-        ProjectUser pu4 = new ProjectUser(null, u4, p1, r5);
+        Task p1t2 = new Task(null, "Do nothing", "Do nothing all day", null, p1);
+        p1t2.getProjectUsers().add(p1u2);
+        p1t2.getProjectUsers().add(p1u4);
 
-        projectUserRepository.saveAll(Arrays.asList(pu2, pu3, pu4));
+        Task p1t3 = new Task(null, "Task 3", "Description 3", null, p1);
+        p1t3.getProjectUsers().add(p1u4);
+        taskRepository.saveAll(Arrays.asList(p1t1, p1t2, p1t3));
+
+        Project p2 = projectRepository.save(new Project(null, "Project 2", "No tasks", null, null));
+        ProjectUser p2u1 = new ProjectUser(null, u1, p2, r2);
+        ProjectUser p2u3 = new ProjectUser(null, u3, p2, r3);
+        ProjectUser p2u4 = new ProjectUser(null, u4, p2, r5);
+        ProjectUser p2u5 = new ProjectUser(null, u5, p2, r6);
+        projectUserRepository.saveAll(Arrays.asList(p2u1, p2u3, p2u4, p2u5));
 
     }
 }

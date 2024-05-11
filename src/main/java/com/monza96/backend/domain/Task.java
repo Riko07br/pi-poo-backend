@@ -1,11 +1,11 @@
 package com.monza96.backend.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -23,8 +23,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_project")
-public class Project implements Serializable {
+@Table(name = "tb_task")
+public class Task implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -32,28 +32,24 @@ public class Project implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String title;
     private String description;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Instant dueTime;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @ManyToOne
+    private Project project;
+    @ManyToMany
     @Setter(AccessLevel.NONE)
     private Set<ProjectUser> projectUsers = new HashSet<>();
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    @Setter(AccessLevel.NONE)
-    private Set<Task> tasks = new HashSet<>();
     //endregion
 
-    public Project(Long id, String name, String description, LocalDate startDate, LocalDate endDate) {
+    public Task(Long id, String title, String description, Instant dueTime, Project project) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.dueTime = dueTime;
+        this.project = project;
     }
-
 
     //region Equals & Hashcode
     @Override
@@ -61,14 +57,15 @@ public class Project implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Project project = (Project) o;
-
-        return Objects.equals(id, project.id);
+        Task task = (Task) o;
+        return Objects.equals(id, task.id) && Objects.equals(title, task.title);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(title);
+        return result;
     }
     //endregion
 }
