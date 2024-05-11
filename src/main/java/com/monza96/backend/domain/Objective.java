@@ -1,31 +1,26 @@
 package com.monza96.backend.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_project")
-public class Project implements Serializable {
+@Table(name = "tb_objective")
+public class Objective implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -33,29 +28,20 @@ public class Project implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String title;
     @Column(columnDefinition = "TEXT")
     private String description;
-    private LocalDate startDate;
-    private LocalDate endDate;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    @Setter(AccessLevel.NONE)
-    private Set<ProjectUser> projectUsers = new HashSet<>();
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    @Setter(AccessLevel.NONE)
-    private Set<Task> tasks = new HashSet<>();
+    @ManyToOne
+    private Task task;
     //endregion
 
-    public Project(Long id, String name, String description, LocalDate startDate, LocalDate endDate) {
+    public Objective(Long id, String title, String description, Task task) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.task = task;
     }
-
 
     //region Equals & Hashcode
     @Override
@@ -63,14 +49,13 @@ public class Project implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Project project = (Project) o;
-
-        return Objects.equals(id, project.id);
+        Objective objective = (Objective) o;
+        return Objects.equals(id, objective.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return Objects.hashCode(id);
     }
     //endregion
 }

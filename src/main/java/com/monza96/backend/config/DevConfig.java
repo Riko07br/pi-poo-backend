@@ -1,11 +1,13 @@
 package com.monza96.backend.config;
 
+import com.monza96.backend.domain.Objective;
 import com.monza96.backend.domain.Project;
 import com.monza96.backend.domain.ProjectUser;
 import com.monza96.backend.domain.Role;
 import com.monza96.backend.domain.Task;
 import com.monza96.backend.domain.User;
 import com.monza96.backend.domain.enums.ProjectAuthority;
+import com.monza96.backend.repository.ObjectiveRepository;
 import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.repository.ProjectUserRepository;
 import com.monza96.backend.repository.RoleRepository;
@@ -22,6 +24,8 @@ import java.util.Arrays;
 @Configuration
 @Profile("dev")
 public class DevConfig implements CommandLineRunner {
+    @Autowired
+    private ObjectiveRepository objectiveRepository;
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
@@ -56,13 +60,32 @@ public class DevConfig implements CommandLineRunner {
         ProjectUser p1u3 = projectUserRepository.save(new ProjectUser(null, u3, p1, r4));
         ProjectUser p1u4 = projectUserRepository.save(new ProjectUser(null, u4, p1, r5));
 
-        Task p1t1 = new Task(null, "Task 1", "Description 1", null, p1);
+        Task p1t1 = new Task(null,
+                "Get addicted to heavy metal",
+                "This task involves immersing oneself in the world of heavy metal music. " +
+                        "It includes listening to a variety of heavy metal sub-genres, understanding " +
+                        "the history and evolution of heavy metal, and appreciating the unique musical " +
+                        "and lyrical elements that define this genre.",
+                null,
+                p1);
+
         p1t1.getProjectUsers().add(p1u2);
         p1t1.getProjectUsers().add(p1u3);
+        p1t1 = taskRepository.save(p1t1);
+
+        Objective p1t1o1 = new Objective(null, "Listen to Iron Maiden", "Listen to Iron Maiden's discography", p1t1);
+        Objective p1t1o2 = new Objective(null, "Listen to Metallica", "Listen to Metallica's discography until 2000", p1t1);
+        Objective p1t1o3 = new Objective(null, "Listen to Calcinha preta", "Listen to relax", p1t1);
+        objectiveRepository.saveAll(Arrays.asList(p1t1o1, p1t1o2, p1t1o3));
 
         Task p1t2 = new Task(null, "Do nothing", "Do nothing all day", null, p1);
         p1t2.getProjectUsers().add(p1u2);
         p1t2.getProjectUsers().add(p1u4);
+        taskRepository.save(p1t2);
+
+        Objective p1t2o1 = new Objective(null, "Sleep", "Sleep all day", p1t2);
+        Objective p1t2o2 = new Objective(null, "Eat", "Eat all day", p1t2);
+        objectiveRepository.saveAll(Arrays.asList(p1t2o1, p1t2o2));
 
         Task p1t3 = new Task(null, "Task 3", "Description 3", null, p1);
         p1t3.getProjectUsers().add(p1u4);
