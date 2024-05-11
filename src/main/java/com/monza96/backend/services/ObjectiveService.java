@@ -1,5 +1,6 @@
 package com.monza96.backend.services;
 
+import com.monza96.backend.domain.Classification;
 import com.monza96.backend.domain.Objective;
 import com.monza96.backend.domain.Task;
 import com.monza96.backend.domain.dtos.ObjectiveRequestDTO;
@@ -20,6 +21,7 @@ import java.util.List;
 public class ObjectiveService {
     private final ObjectiveRepository objectiveRepository;
 
+    private final ClassificationService classificationService;
     private final TaskService taskService;
 
     public List<ObjectiveResponseDTO> findAll() {
@@ -33,7 +35,9 @@ public class ObjectiveService {
 
     public ObjectiveResponseDTO create(ObjectiveRequestDTO dto) {
         Task task = taskService.findEntityById(dto.taskId());
-        Objective objective = ObjectiveMapper.toEntity(dto, task);
+        Classification classification = classificationService.findEntityById(dto.classificationId());
+
+        Objective objective = ObjectiveMapper.toEntity(dto, task, classification);
         return ObjectiveMapper.toResponseDTO(objectiveRepository.save(objective));
     }
 

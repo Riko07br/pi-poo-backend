@@ -1,6 +1,5 @@
 package com.monza96.backend.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +15,6 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -25,8 +23,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_task")
-public class Task implements Serializable {
+@Table(name = "tb_classification")
+public class Classification implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -35,45 +33,39 @@ public class Task implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    private Instant dueTime;
 
     @ManyToOne
     private Project project;
-    @ManyToMany
+    @ManyToMany(mappedBy = "classifications")
     @Setter(AccessLevel.NONE)
-    private Set<ProjectUser> projectUsers = new HashSet<>();
-    @OneToMany(mappedBy = "task")
+    private Set<Task> tasks = new HashSet<>();
+
+    @OneToMany(mappedBy = "classification")
     @Setter(AccessLevel.NONE)
     private Set<Objective> objectives = new HashSet<>();
-    @ManyToMany
-    @Setter(AccessLevel.NONE)
-    private Set<Classification> classifications = new HashSet<>();
     //endregion
 
-    public Task(Long id, String title, String description, Instant dueTime, Project project) {
+    public Classification(Long id, String title, Project project) {
         this.id = id;
         this.title = title;
-        this.description = description;
-        this.dueTime = dueTime;
         this.project = project;
     }
 
-    //region Equals & Hashcode
+    //region Equals and HashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Task task = (Task) o;
-        return Objects.equals(id, task.id) && Objects.equals(title, task.title);
+        Classification that = (Classification) o;
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(project, that.project);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hashCode(id);
         result = 31 * result + Objects.hashCode(title);
+        result = 31 * result + Objects.hashCode(project);
         return result;
     }
     //endregion

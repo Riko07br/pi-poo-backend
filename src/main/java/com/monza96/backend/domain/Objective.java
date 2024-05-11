@@ -34,13 +34,16 @@ public class Objective implements Serializable {
 
     @ManyToOne
     private Task task;
+    @ManyToOne
+    private Classification classification;
     //endregion
 
-    public Objective(Long id, String title, String description, Task task) {
+    public Objective(Long id, String title, String description, Task task, Classification classification) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.task = task;
+        this.classification = classification;
     }
 
     //region Equals & Hashcode

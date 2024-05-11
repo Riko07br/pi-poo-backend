@@ -1,5 +1,6 @@
 package com.monza96.backend.domain.mappers;
 
+import com.monza96.backend.domain.Classification;
 import com.monza96.backend.domain.Objective;
 import com.monza96.backend.domain.Task;
 import com.monza96.backend.domain.dtos.ObjectiveRequestDTO;
@@ -12,7 +13,7 @@ public class ObjectiveMapper {
                 task.getDescription());
     }
 
-    public static Objective toEntity(ObjectiveRequestDTO dto, Task task) {
-        return new Objective(null, dto.title(), dto.description(), task);
+    public static Objective toEntity(ObjectiveRequestDTO dto, Task task, Classification classification) {
+        return new Objective(null, dto.title(), dto.description(), task, classification);
     }
 }

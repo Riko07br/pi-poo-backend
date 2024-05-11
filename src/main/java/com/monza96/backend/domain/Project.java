@@ -46,6 +46,10 @@ public class Project implements Serializable {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @Setter(AccessLevel.NONE)
     private Set<Task> tasks = new HashSet<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @Setter(AccessLevel.NONE)
+    private Set<Classification> classifications = new HashSet<>();
     //endregion
 
     public Project(Long id, String name, String description, LocalDate startDate, LocalDate endDate) {
