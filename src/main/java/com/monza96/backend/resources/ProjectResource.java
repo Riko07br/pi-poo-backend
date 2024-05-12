@@ -4,6 +4,7 @@ import com.monza96.backend.domain.dtos.ProjectRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectResponseDTO;
 import com.monza96.backend.services.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,8 +27,8 @@ public class ProjectResource {
     private final ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponseDTO>> findAll() {
-        List<ProjectResponseDTO> projects = projectService.findAll();
+    public ResponseEntity<Page<ProjectResponseDTO>> findAll(Authentication authentication) {
+        Page<ProjectResponseDTO> projects = projectService.findAll(authentication);
         return ResponseEntity.ok().body(projects);
     }
 

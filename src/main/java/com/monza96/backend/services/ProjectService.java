@@ -15,10 +15,11 @@ import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +31,12 @@ public class ProjectService {
     private final RoleService roleService;
     private final UserService userService;
 
-    public List<ProjectResponseDTO> findAll() {
-        return projectRepository.findAll().stream().map(x -> ProjectMapper.toResponseDTO(x)).toList();
+    public Page<ProjectResponseDTO> findAll(Authentication authentication) {
+        String userEmail = authentication.getName();
+        Pageable pageable = PageRequest.of(0, 10);
+        return projectRepository
+                .findByProjectUsersUserEmail(userEmail, pageable)
+                .map(x -> ProjectMapper.toResponseDTO(x));
     }
 
     public ProjectResponseDTO findById(Long id) {
@@ -46,7 +51,7 @@ public class ProjectService {
 
         Project project = new Project(null, dto.name(), dto.description(), dto.startDate(), dto.endDate());
         project = projectRepository.save(project);
-        
+
         projectUserRepository.save(new ProjectUser(null, projectCreator, project, creatorRole));
 
         return ProjectMapper.toResponseDTO(project);
