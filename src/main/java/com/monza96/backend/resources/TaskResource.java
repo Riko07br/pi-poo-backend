@@ -4,6 +4,7 @@ import com.monza96.backend.domain.dtos.TaskRequestDTO;
 import com.monza96.backend.domain.dtos.TaskResponseDTO;
 import com.monza96.backend.services.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,43 +17,48 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/projects/{projectId}/tasks")
 public class TaskResource {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDTO>> findAll() {
-        List<TaskResponseDTO> tasks = taskService.findAll();
-        return ResponseEntity.ok().body(tasks);
+    public ResponseEntity<Page<TaskResponseDTO>> findAll(@PathVariable Long projectId) {
+        return ResponseEntity.ok().body(taskService.findAll(projectId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long id) {
-        TaskResponseDTO responseDTO = taskService.findById(id);
+    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long projectId, @PathVariable Long id) {
+        TaskResponseDTO responseDTO = taskService.findById(projectId, id);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> create(@RequestBody TaskRequestDTO taskRequestDTO) throws URISyntaxException {
-        TaskResponseDTO responseDTO = taskService.create(taskRequestDTO);
-        return ResponseEntity.created(new URI("/tasks/" + responseDTO.id())).body(responseDTO);
+    public ResponseEntity<TaskResponseDTO> create(@PathVariable Long projectId,
+                                                  @RequestBody TaskRequestDTO taskRequestDTO) throws URISyntaxException {
+        TaskResponseDTO responseDTO = taskService.create(projectId, taskRequestDTO);
+        return ResponseEntity.created(new URI("/projects/" +
+                projectId +
+                "/tasks/" +
+                responseDTO.id())).body(responseDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> update(@PathVariable Long id,
+    public ResponseEntity<TaskResponseDTO> update(@PathVariable Long projectId,
+                                                  @PathVariable Long id,
                                                   @RequestBody TaskRequestDTO requestDTO) {
-        TaskResponseDTO responseDTO = taskService.update(id, requestDTO);
+        TaskResponseDTO responseDTO = taskService.update(projectId, id, requestDTO);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        taskService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long projectId, @PathVariable Long id) {
+        taskService.delete(projectId, id);
         return ResponseEntity.noContent().build();
     }
-
+    // TODO nested routes can be added on the corresponding resource
+    // TODO so users may have the projects nested route
+    // TODO this may avoid top leve deep nested routes only for finding methods
 }

@@ -6,14 +6,16 @@ import com.monza96.backend.domain.dtos.TaskRequestDTO;
 import com.monza96.backend.domain.dtos.TaskResponseDTO;
 import com.monza96.backend.domain.mappers.TaskMapper;
 import com.monza96.backend.repository.TaskRepository;
+import com.monza96.backend.resources.QueryParams;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -22,22 +24,23 @@ public class TaskService {
 
     private final ProjectService projectService;
 
-    public List<TaskResponseDTO> findAll() {
-        return taskRepository.findAll().stream().map(x -> TaskMapper.toResponseDTO(x)).toList();
+    public Page<TaskResponseDTO> findAll(Long projectId) {
+        Pageable pageable = PageRequest.of(0, 10);
+        return taskRepository.findByProjectId(projectId, pageable).map(x -> TaskMapper.toResponseDTO(x));
     }
 
-    public TaskResponseDTO findById(Long id) {
-        Task task = findEntityById(id);
+    public TaskResponseDTO findById(Long projectId, Long id) {
+        Task task = findEntityByProjectIdAndId(projectId, id);
         return TaskMapper.toResponseDTO(task);
     }
 
-    public TaskResponseDTO create(TaskRequestDTO dto) {
-        Project project = projectService.findEntityById(dto.projectId());
+    public TaskResponseDTO create(Long projectId, TaskRequestDTO dto) {
+        Project project = projectService.findEntityById(projectId);
         Task task = TaskMapper.toEntity(dto, project);
         return TaskMapper.toResponseDTO(taskRepository.save(task));
     }
 
-    public void delete(Long id) {
+    public void delete(Long projectId, Long id) {
         try {
             taskRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -47,8 +50,8 @@ public class TaskService {
         }
     }
 
-    public TaskResponseDTO update(Long id, TaskRequestDTO dto) {
-        Task task = findEntityById(id);
+    public TaskResponseDTO update(Long projectId, Long id, TaskRequestDTO dto) {
+        Task task = findEntityByProjectIdAndId(projectId, id);
 
         task.setTitle(dto.title());
         task.setDescription(dto.description());
@@ -57,8 +60,13 @@ public class TaskService {
         return TaskMapper.toResponseDTO(taskRepository.save(task));
     }
 
-    Task findEntityById(Long id) {
-        return taskRepository.findById(id)
+    public Page<TaskResponseDTO> findTasksByUserId(Long userId, QueryParams queryParams) {
+        return taskRepository.findByProjectUsersUserId(userId, queryParams.getPageable())
+                .map(x -> TaskMapper.toResponseDTO(x));
+    }
+
+    Task findEntityByProjectIdAndId(Long projectId, Long id) {
+        return taskRepository.findByProjectIdAndId(projectId, id)
                 .orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
     }
 }

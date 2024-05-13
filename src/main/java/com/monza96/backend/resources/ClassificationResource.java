@@ -4,6 +4,7 @@ import com.monza96.backend.domain.dtos.ClassificationRequestDTO;
 import com.monza96.backend.domain.dtos.ClassificationResponseDTO;
 import com.monza96.backend.services.ClassificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,42 +17,46 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/classifications")
+@RequestMapping("/projects/{projectId}/classifications")
 public class ClassificationResource {
     private final ClassificationService classificationService;
 
     @GetMapping
-    public ResponseEntity<List<ClassificationResponseDTO>> findAll() {
-        List<ClassificationResponseDTO> classifications = classificationService.findAll();
+    public ResponseEntity<Page<ClassificationResponseDTO>> findAll(@PathVariable Long projectId, QueryParams queryParams) {
+        Page<ClassificationResponseDTO> classifications = classificationService.findAll(projectId, queryParams);
         return ResponseEntity.ok().body(classifications);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClassificationResponseDTO> findById(@PathVariable Long id) {
-        ClassificationResponseDTO responseDTO = classificationService.findById(id);
+    public ResponseEntity<ClassificationResponseDTO> findById(@PathVariable Long projectId, @PathVariable Long id) {
+        ClassificationResponseDTO responseDTO = classificationService.findById(projectId, id);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @PostMapping
-    public ResponseEntity<ClassificationResponseDTO> create(@RequestBody ClassificationRequestDTO classificationRequestDTO) throws URISyntaxException {
-        ClassificationResponseDTO responseDTO = classificationService.create(classificationRequestDTO);
-        return ResponseEntity.created(new URI("/classifications/" + responseDTO.id())).body(responseDTO);
+    public ResponseEntity<ClassificationResponseDTO> create(
+            @PathVariable Long projectId,
+            @RequestBody ClassificationRequestDTO classificationRequestDTO) throws URISyntaxException {
+
+        ClassificationResponseDTO responseDTO = classificationService.create(projectId, classificationRequestDTO);
+        return ResponseEntity.created(new URI("/projects/" + projectId +
+                "/classifications/" + responseDTO.id())).body(responseDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClassificationResponseDTO> update(@PathVariable Long id,
+    public ResponseEntity<ClassificationResponseDTO> update(@PathVariable Long projectId,
+                                                            @PathVariable Long id,
                                                             @RequestBody ClassificationRequestDTO requestDTO) {
-        ClassificationResponseDTO responseDTO = classificationService.update(id, requestDTO);
+        ClassificationResponseDTO responseDTO = classificationService.update(projectId, id, requestDTO);
         return ResponseEntity.ok().body(responseDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        classificationService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long projectId, @PathVariable Long id) {
+        classificationService.delete(projectId, id);
         return ResponseEntity.noContent().build();
     }
 

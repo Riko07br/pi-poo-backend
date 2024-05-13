@@ -5,7 +5,6 @@ import java.time.Instant;
 public record TaskRequestDTO(
         String title,
         String description,
-        Instant dueTime,
-        Long projectId
+        Instant dueTime
 ) {
 }

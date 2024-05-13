@@ -10,14 +10,13 @@ import com.monza96.backend.domain.enums.ProjectAuthority;
 import com.monza96.backend.domain.mappers.ProjectMapper;
 import com.monza96.backend.repository.ProjectRepository;
 import com.monza96.backend.repository.ProjectUserRepository;
+import com.monza96.backend.resources.QueryParams;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +30,10 @@ public class ProjectService {
     private final RoleService roleService;
     private final UserService userService;
 
-    public Page<ProjectResponseDTO> findAll(Authentication authentication) {
+    public Page<ProjectResponseDTO> findAll(Authentication authentication, QueryParams queryParams) {
         String userEmail = authentication.getName();
-        Pageable pageable = PageRequest.of(0, 10);
         return projectRepository
-                .findByProjectUsersUserEmail(userEmail, pageable)
+                .findByProjectUsersUserEmail(userEmail, queryParams.getPageable())
                 .map(x -> ProjectMapper.toResponseDTO(x));
     }
 
@@ -76,6 +74,11 @@ public class ProjectService {
         project.setEndDate(dto.endDate());
 
         return ProjectMapper.toResponseDTO(projectRepository.save(project));
+    }
+
+    public Page<ProjectResponseDTO> findProjectsByUserId(Long userId, QueryParams queryParams) {
+        return projectRepository.findByProjectUsersUserId(userId, queryParams.getPageable())
+                .map(x -> ProjectMapper.toResponseDTO(x));
     }
 
     Project findEntityById(Long id) {

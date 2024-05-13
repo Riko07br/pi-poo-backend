@@ -1,9 +1,14 @@
 package com.monza96.backend.resources;
 
+import com.monza96.backend.domain.dtos.ProjectResponseDTO;
+import com.monza96.backend.domain.dtos.TaskResponseDTO;
 import com.monza96.backend.domain.dtos.UserRequestDTO;
 import com.monza96.backend.domain.dtos.UserResponseDTO;
+import com.monza96.backend.services.ProjectService;
+import com.monza96.backend.services.TaskService;
 import com.monza96.backend.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,17 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserResource {
     private final UserService userService;
+    private final ProjectService projectService;
+    private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> findAll() {
-        List<UserResponseDTO> users = userService.findAll();
+    public ResponseEntity<Page<UserResponseDTO>> findAll(QueryParams queryParams) {
+        Page<UserResponseDTO> users = userService.findAll(queryParams);
         return ResponseEntity.ok().body(users);
     }
 
@@ -52,6 +58,18 @@ public class UserResource {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/projects")
+    public ResponseEntity<Page<ProjectResponseDTO>> findProjects(@PathVariable Long id, QueryParams queryParams) {
+        Page<ProjectResponseDTO> projects = projectService.findProjectsByUserId(id, queryParams);
+        return ResponseEntity.ok().body(projects);
+    }
+
+    @GetMapping("/{id}/tasks")
+    public ResponseEntity<Page<TaskResponseDTO>> findTasks(@PathVariable Long id, QueryParams queryParams) {
+        Page<TaskResponseDTO> tasks = taskService.findTasksByUserId(id, queryParams);
+        return ResponseEntity.ok().body(tasks);
     }
 
 }

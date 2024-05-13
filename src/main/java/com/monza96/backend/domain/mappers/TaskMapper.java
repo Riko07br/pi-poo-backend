@@ -5,13 +5,19 @@ import com.monza96.backend.domain.Task;
 import com.monza96.backend.domain.dtos.TaskRequestDTO;
 import com.monza96.backend.domain.dtos.TaskResponseDTO;
 
+import java.util.stream.Collectors;
+
 public class TaskMapper {
     public static TaskResponseDTO toResponseDTO(Task task) {
         return new TaskResponseDTO(task.getId(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getDueTime(),
-                task.getProject().getId());
+                ProjectMapper.toResponseDTO(task.getProject()),
+                task.getProjectUsers()
+                        .stream()
+                        .map(projectUser -> ProjectUserMapper.toResponseDTO(projectUser))
+                        .collect(Collectors.toSet()));
     }
 
     public static Task toEntity(TaskRequestDTO dto, Project project) {

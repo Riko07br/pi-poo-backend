@@ -8,14 +8,14 @@ import com.monza96.backend.domain.dtos.ProjectUserRequestDTO;
 import com.monza96.backend.domain.dtos.ProjectUserResponseDTO;
 import com.monza96.backend.domain.mappers.ProjectUserMapper;
 import com.monza96.backend.repository.ProjectUserRepository;
+import com.monza96.backend.resources.QueryParams;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +27,18 @@ public class ProjectUserService {
     private final RoleService roleService;
     private final UserService userService;
 
-    public List<ProjectUserResponseDTO> findAll() {
-        return projectUserRepository.findAll()
-                .stream()
-                .map(x -> ProjectUserMapper.toResponseDTO(x)).toList();
+    public Page<ProjectUserResponseDTO> findAll(Long projectId, QueryParams queryParams) {
+        return projectUserRepository.findByProjectId(projectId, queryParams.getPageable())
+                .map(x -> ProjectUserMapper.toResponseDTO(x));
     }
 
-    public ProjectUserResponseDTO findById(Long id) {
-        ProjectUser projectUser = findEntityById(id);
+    public ProjectUserResponseDTO findById(Long projectId, Long id) {
+        ProjectUser projectUser = findEntityByProjectIdAndId(projectId, id);
         return ProjectUserMapper.toResponseDTO(projectUser);
     }
 
-    public ProjectUserResponseDTO create(ProjectUserRequestDTO dto) {
-        Project project = projectService.findEntityById(dto.projectId());
+    public ProjectUserResponseDTO create(Long projectId, ProjectUserRequestDTO dto) {
+        Project project = projectService.findEntityById(projectId);
         User user = userService.findEntityById(dto.userId());
         Role role = roleService.findEntityByAuthority(dto.authority());
 
@@ -54,7 +53,7 @@ public class ProjectUserService {
         return ProjectUserMapper.toResponseDTO(projectUserRepository.save(projectUser));
     }
 
-    public void delete(Long id) {
+    public void delete(Long projectId, Long id) {
         try {
             projectUserRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -64,8 +63,8 @@ public class ProjectUserService {
         }
     }
 
-    public ProjectUserResponseDTO update(Long id, ProjectUserRequestDTO dto) {
-        ProjectUser projectUser = findEntityById(id);
+    public ProjectUserResponseDTO update(Long projectId, Long id, ProjectUserRequestDTO dto) {
+        ProjectUser projectUser = findEntityByProjectIdAndId(projectId, id);
 
         User userUpdater = userService.findEntityById(dto.userId());
         if (projectUser.getUser().equals(userUpdater)) {
@@ -79,8 +78,8 @@ public class ProjectUserService {
         return ProjectUserMapper.toResponseDTO(projectUserRepository.save(projectUser));
     }
 
-    ProjectUser findEntityById(Long id) {
-        return projectUserRepository.findById(id)
+    private ProjectUser findEntityByProjectIdAndId(Long projectId, Long id) {
+        return projectUserRepository.findByProjectIdAndId(projectId, id)
                 .orElseThrow(() -> new ResourceNotFoundException(ProjectUser.class, id));
     }
 }

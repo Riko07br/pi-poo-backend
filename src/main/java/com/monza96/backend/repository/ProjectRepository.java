@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Page<Project> findByProjectUsersUserEmail(String email, Pageable pageable);
+
+    Page<Project> findByProjectUsersUserId(Long userId, Pageable pageable);
 }

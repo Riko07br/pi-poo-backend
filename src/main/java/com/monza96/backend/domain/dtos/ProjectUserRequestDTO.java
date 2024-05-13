@@ -4,7 +4,6 @@ import com.monza96.backend.domain.enums.ProjectAuthority;
 
 public record ProjectUserRequestDTO(
         Long userId,
-        ProjectAuthority authority,
-        Long projectId
+        ProjectAuthority authority
 ) {
 }

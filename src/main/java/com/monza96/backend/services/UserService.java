@@ -5,13 +5,13 @@ import com.monza96.backend.domain.dtos.UserRequestDTO;
 import com.monza96.backend.domain.dtos.UserResponseDTO;
 import com.monza96.backend.domain.mappers.UserMapper;
 import com.monza96.backend.repository.UserRepository;
+import com.monza96.backend.resources.QueryParams;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService {
@@ -22,8 +22,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserResponseDTO> findAll() {
-        return userRepository.findAll().stream().map(x -> UserMapper.toResponseDTO(x)).toList();
+    public Page<UserResponseDTO> findAll(QueryParams queryParams) {
+        return userRepository.findAll(queryParams.getPageable()).map(x -> UserMapper.toResponseDTO(x));
     }
 
     public UserResponseDTO findById(Long id) {
@@ -55,6 +55,11 @@ public class UserService {
         return UserMapper.toResponseDTO(userRepository.save(user));
     }
 
+    public Page<UserResponseDTO> findUsersByProjectId(Long projectId, QueryParams queryParams) {
+        return userRepository.findByProjectUsersProjectId(projectId, queryParams.getPageable())
+                .map(x -> UserMapper.toResponseDTO(x));
+    }
+
     User findEntityById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, id));
@@ -64,4 +69,6 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, 0L));
     }
+
+
 }

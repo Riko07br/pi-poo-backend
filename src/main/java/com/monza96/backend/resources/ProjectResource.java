@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,8 +26,8 @@ public class ProjectResource {
     private final ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<Page<ProjectResponseDTO>> findAll(Authentication authentication) {
-        Page<ProjectResponseDTO> projects = projectService.findAll(authentication);
+    public ResponseEntity<Page<ProjectResponseDTO>> findAll(Authentication authentication, QueryParams queryParams) {
+        Page<ProjectResponseDTO> projects = projectService.findAll(authentication, queryParams);
         return ResponseEntity.ok().body(projects);
     }
 
