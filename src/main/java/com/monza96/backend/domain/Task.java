@@ -41,7 +41,7 @@ public class Task implements Serializable {
 
     @ManyToOne
     private Project project;
-    @ManyToMany
+    @ManyToMany(mappedBy = "tasks")
     @Setter(AccessLevel.NONE)
     private Set<ProjectUser> projectUsers = new HashSet<>();
     @OneToMany(mappedBy = "task")

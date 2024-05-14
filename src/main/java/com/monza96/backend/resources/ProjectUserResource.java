@@ -40,7 +40,9 @@ public class ProjectUserResource {
     public ResponseEntity<ProjectUserResponseDTO> create(@PathVariable Long projectId,
                                                          @RequestBody ProjectUserRequestDTO projectUserRequestDTO) throws URISyntaxException {
         ProjectUserResponseDTO responseDTO = projectUserService.create(projectId, projectUserRequestDTO);
-        return ResponseEntity.created(new URI("/project-users/" + responseDTO.id())).body(responseDTO);
+        return ResponseEntity.created(new URI("projects/" +
+                projectId +
+                "/users" + responseDTO.id())).body(responseDTO);
     }
 
     @PutMapping("/{id}")

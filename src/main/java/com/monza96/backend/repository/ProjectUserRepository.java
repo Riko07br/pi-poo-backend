@@ -11,4 +11,8 @@ public interface ProjectUserRepository extends JpaRepository<ProjectUser, Long> 
     Page<ProjectUser> findByProjectId(Long projectId, Pageable pageable);
 
     Optional<ProjectUser> findByProjectIdAndId(Long projectId, Long id);
+
+    Page<ProjectUser> findByProjectIdAndTasksId(Long projectId, Long tasksId, Pageable pageable);
+
+    Optional<ProjectUser> findByProjectIdAndTasksIdAndId(Long projectId, Long tasksId, Long id);
 }

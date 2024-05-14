@@ -83,13 +83,16 @@ public class DevConfig implements CommandLineRunner {
                 null,
                 project1);
 
-        project1task1.getProjectUsers().add(project1u2);
-        project1task1.getProjectUsers().add(project1u3);
-
         project1task1.getClassifications().add(project1class1);
         project1task1.getClassifications().add(project1class2);
         project1task1.getClassifications().add(project1class3);
         project1task1 = taskRepository.save(project1task1);
+
+        project1u2.getTasks().add(project1task1);
+        project1u2 = projectUserRepository.save(project1u2);
+
+        project1u3.getTasks().add(project1task1);
+        project1u3 = projectUserRepository.save(project1u3);
 
         System.out.println("Project1: add objectives to task1------------------------------------");
         Objective project1task1o1 = new Objective(null,
@@ -111,9 +114,12 @@ public class DevConfig implements CommandLineRunner {
 
         System.out.println("Project1: add task2 with users------------------------------------");
         Task project1task2 = new Task(null, "Do nothing", "Do nothing all day", null, project1);
-        project1task2.getProjectUsers().add(project1u2);
-        project1task2.getProjectUsers().add(project1u4);
         taskRepository.save(project1task2);
+
+        project1u2.getTasks().add(project1task2);
+        project1u2 = projectUserRepository.save(project1u2);
+        project1u4.getTasks().add(project1task2);
+        project1u4 = projectUserRepository.save(project1u4);
 
         System.out.println("Project1: add objectives to task2------------------------------------");
         Objective project1task2o1 = new Objective(null, "Sleep", "Sleep all day", project1task2, project1class1);
@@ -121,9 +127,11 @@ public class DevConfig implements CommandLineRunner {
         objectiveRepository.saveAll(Arrays.asList(project1task2o1, project1task2o2));
 
         System.out.println("Project1: add task3 with users------------------------------------");
-        Task project1task3 = new Task(null, "Task 3", "Description 3", null, project1);
-        project1task3.getProjectUsers().add(project1u4);
-        taskRepository.saveAll(Arrays.asList(project1task1, project1task2, project1task3));
+        Task project1task3 = taskRepository.save(new Task(null, "Task 3", "Description 3", null, project1));
+        taskRepository.save(project1task3);
+
+        project1u4.getTasks().add(project1task3);
+        project1u4 = projectUserRepository.save(project1u4);
         System.out.println("Project 1 created------------------------------------");
 
 

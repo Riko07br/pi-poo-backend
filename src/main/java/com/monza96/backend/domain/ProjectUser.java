@@ -38,7 +38,7 @@ public class ProjectUser implements Serializable {
     private Project project;
     @ManyToOne
     private Role role;
-    @ManyToMany(mappedBy = "projectUsers")
+    @ManyToMany
     @Setter(AccessLevel.NONE)
     private Set<Task> tasks = new HashSet<>();
     //endregion
