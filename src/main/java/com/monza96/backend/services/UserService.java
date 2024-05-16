@@ -6,21 +6,23 @@ import com.monza96.backend.domain.dtos.UserResponseDTO;
 import com.monza96.backend.domain.mappers.UserMapper;
 import com.monza96.backend.repository.UserRepository;
 import com.monza96.backend.resources.QueryParams;
+import com.monza96.backend.security.SecurityConfiguration;
 import com.monza96.backend.services.exceptions.DatabaseException;
 import com.monza96.backend.services.exceptions.ResourceNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final SecurityConfiguration securityConfiguration;
 
     public Page<UserResponseDTO> findAll(QueryParams queryParams) {
         return userRepository.findAll(queryParams.getPageable()).map(x -> UserMapper.toResponseDTO(x));
@@ -32,7 +34,9 @@ public class UserService {
     }
 
     public UserResponseDTO create(UserRequestDTO dto) {
-        User user = UserMapper.toEntity(dto);
+        User user = new User();
+        user.setEmail(dto.email());
+        user.setPassword(securityConfiguration.passwordEncoder().encode(dto.password()));
         return UserMapper.toResponseDTO(userRepository.save(user));
     }
 
